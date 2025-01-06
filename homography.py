@@ -29,8 +29,8 @@ def get_trans_matrix(points):
             for i in range(12):
                 if i not in inds and points[i][0] is not None:
                     p = points[i]
-                    t = trans_kps[i]
-                    dists.append(distance.euclidean(points[i], trans_kps[i]))
+                    t = trans_kps[i][0]
+                    dists.append(distance.euclidean(points[i], t ))
             dist_median = np.mean(dists)
             if dist_median < dist_max:
                 matrix_trans = matrix
