@@ -1,1 +1,7 @@
 venv/
+__pycache__/
+data/
+inputs/
+outputs/
+models/
+exps/

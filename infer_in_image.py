@@ -18,6 +18,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = BallTrackerNet(out_channels=15)
+    print("Cuda available : ", torch.cuda.is_available())
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = model.to(device)
     model.load_state_dict(torch.load(args.model_path, map_location=device))
