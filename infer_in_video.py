@@ -51,6 +51,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = BallTrackerNet(out_channels=15)
+    print("Cuda available : ", torch.cuda.is_available())
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = model.to(device)
     model.load_state_dict(torch.load(args.model_path, map_location=device))
@@ -58,9 +59,16 @@ if __name__ == '__main__':
 
     OUTPUT_WIDTH = 640
     OUTPUT_HEIGHT = 360
-    
+
     frames, fps = read_video(args.input_path)
     frames_upd = []
+
+    im = frames[0]
+    h, w, c = im.shape
+    print('width:  ', w)
+    print('height: ', h)
+    print('channel:', c)
+
     for image in tqdm(frames):
         img = cv2.resize(image, (OUTPUT_WIDTH, OUTPUT_HEIGHT))
         inp = (img.astype(np.float32) / 255.)
@@ -86,8 +94,7 @@ if __name__ == '__main__':
 
         for j in range(len(points)):
             if points[j][0] is not None:
-                image = cv2.circle(image, (int(points[j][0]), int(points[j][1])),
-                                  radius=0, color=(0, 0, 255), thickness=10)
+                image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
         frames_upd.append(image)
 
     write_video(frames_upd, fps, args.output_path)
