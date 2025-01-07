@@ -94,7 +94,9 @@ if __name__ == '__main__':
 
         for j in range(len(points)):
             if points[j][0] is not None:
-                image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
+                correctedPointX = int(points[j][0]*1.5)
+                correctedPointY = int(points[j][1]*1.5)
+                image = cv2.circle(image, (correctedPointX, correctedPointY), radius=0, color=(0, 0, 255), thickness=10)
         frames_upd.append(image)
 
     write_video(frames_upd, fps, args.output_path)
