@@ -65,9 +65,15 @@ if __name__ == '__main__':
 
     im = frames[0]
     h, w, c = im.shape
-    print('width:  ', w)
+    print('width: ', w)
     print('height: ', h)
     print('channel:', c)
+
+    scaleX = w / OUTPUT_WIDTH
+    scaleY = h / OUTPUT_HEIGHT
+
+    print('scaleX:', scaleX)
+    print('scaleY:', scaleY)
 
     for image in tqdm(frames):
         img = cv2.resize(image, (OUTPUT_WIDTH, OUTPUT_HEIGHT))
@@ -81,7 +87,7 @@ if __name__ == '__main__':
         points = []
         for kps_num in range(14):
             heatmap = (pred[kps_num] * 255).astype(np.uint8)
-            x_pred, y_pred = postprocess(heatmap, low_thresh=170, max_radius=25)
+            x_pred, y_pred = postprocess(heatmap, scaleX, scaleY, low_thresh=170, max_radius=25)
             if args.use_refine_kps and kps_num not in [8, 12, 9] and x_pred and y_pred:
                 x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred))
             points.append((x_pred, y_pred))
@@ -94,9 +100,7 @@ if __name__ == '__main__':
 
         for j in range(len(points)):
             if points[j][0] is not None:
-                correctedPointX = int(points[j][0]*1.5)
-                correctedPointY = int(points[j][1]*1.5)
-                image = cv2.circle(image, (correctedPointX, correctedPointY), radius=0, color=(0, 0, 255), thickness=10)
+                image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
         frames_upd.append(image)
 
     write_video(frames_upd, fps, args.output_path)
