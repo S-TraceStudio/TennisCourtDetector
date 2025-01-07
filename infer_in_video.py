@@ -9,6 +9,7 @@ from postprocess import postprocess, refine_kps
 from homography import get_trans_matrix, refer_kps
 import argparse
 
+
 def read_video(path_video):
     """ Read video file
     :params
@@ -30,6 +31,7 @@ def read_video(path_video):
     cap.release()
     return frames, fps
 
+
 def write_video(imgs_new, fps, path_output_video):
     height, width = imgs_new[0].shape[:2]
     out = cv2.VideoWriter(path_output_video, cv2.VideoWriter_fourcc(*'DIVX'),
@@ -37,7 +39,7 @@ def write_video(imgs_new, fps, path_output_video):
     for num in range(len(imgs_new)):
         frame = imgs_new[num]
         out.write(frame)
-    out.release() 
+    out.release()
 
 
 if __name__ == '__main__':
@@ -89,7 +91,7 @@ if __name__ == '__main__':
             heatmap = (pred[kps_num] * 255).astype(np.uint8)
             x_pred, y_pred = postprocess(heatmap, scaleX, scaleY, low_thresh=170, max_radius=25)
             if args.use_refine_kps and kps_num not in [8, 12, 9] and x_pred and y_pred:
-                x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred))
+                x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred), crop_size=40)
             points.append((x_pred, y_pred))
 
         if args.use_homography:
@@ -101,8 +103,9 @@ if __name__ == '__main__':
         for j in range(len(points)):
             if points[j][0] is not None:
                 image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
+
+            image = cv2.line(image, (int(points[0][0]), int(points[0][1])), (int(points[2][0]), int(points[2][1])), thickness=5, color=(255, 0, 0))
+
         frames_upd.append(image)
 
     write_video(frames_upd, fps, args.output_path)
-
-    
