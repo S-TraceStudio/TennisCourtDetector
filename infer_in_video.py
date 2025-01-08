@@ -50,6 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_path', type=str, help='path to output video')
     parser.add_argument('--use_refine_kps', action='store_true', help='whether to use refine kps postprocessing')
     parser.add_argument('--use_homography', action='store_true', help='whether to use homography postprocessing')
+    parser.add_argument('--draw_lines', action='store_true', help='whether to draw lines in the video result')
     args = parser.parse_args()
 
     model = BallTrackerNet(out_channels=15)
@@ -104,7 +105,20 @@ if __name__ == '__main__':
             if points[j][0] is not None:
                 image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
 
-            image = cv2.line(image, (int(points[0][0]), int(points[0][1])), (int(points[2][0]), int(points[2][1])), thickness=5, color=(255, 0, 0))
+            if args.draw_lines:
+                lineColor = (0, 0, 0)
+                lineThickness = 2
+                image = cv2.line(image, (int(points[0][0]), int(points[0][1])), (int(points[2][0]), int(points[2][1])), thickness=lineThickness, color=lineColor)
+                image = cv2.line(image, (int(points[4][0]), int(points[4][1])), (int(points[5][0]), int(points[5][1])), thickness=lineThickness, color=lineColor)
+                image = cv2.line(image, (int(points[6][0]), int(points[6][1])), (int(points[7][0]), int(points[7][1])), thickness=lineThickness, color=lineColor)
+                image = cv2.line(image, (int(points[1][0]), int(points[1][1])), (int(points[3][0]), int(points[3][1])), thickness=lineThickness, color=lineColor)
+
+                image = cv2.line(image, (int(points[0][0]), int(points[0][1])), (int(points[1][0]), int(points[1][1])), thickness=lineThickness, color=lineColor)
+                image = cv2.line(image, (int(points[8][0]), int(points[8][1])), (int(points[9][0]), int(points[9][1])), thickness=lineThickness, color=lineColor)
+                image = cv2.line(image, (int(points[10][0]), int(points[10][1])), (int(points[11][0]), int(points[11][1])), thickness=lineThickness, color=lineColor)
+                image = cv2.line(image, (int(points[2][0]), int(points[2][1])), (int(points[3][0]), int(points[3][1])), thickness=lineThickness, color=lineColor)
+
+                image = cv2.line(image, (int(points[12][0]), int(points[12][1])), (int(points[13][0]), int(points[13][1])), thickness=lineThickness, color=lineColor)
 
         frames_upd.append(image)
 
