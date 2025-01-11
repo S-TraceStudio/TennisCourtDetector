@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from scipy.spatial import distance
-from utils import line_intersection
+from utils import line_intersection, displayDebugImage
 
 
 def postprocess(heatmap, scaleX=1, scaleY=1, low_thresh=155, min_radius=10, max_radius=30):
@@ -14,7 +14,7 @@ def postprocess(heatmap, scaleX=1, scaleY=1, low_thresh=155, min_radius=10, max_
         y_pred = circles[0][0][1] * scaleY
     return x_pred, y_pred
 
-def refine_kps(img, x_ct, y_ct, crop_size=40):
+def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
     refined_x_ct, refined_y_ct = x_ct, y_ct
     
     img_height, img_width = img.shape[:2]
@@ -25,7 +25,11 @@ def refine_kps(img, x_ct, y_ct, crop_size=40):
 
     img_crop = img[x_min:x_max, y_min:y_max]
     lines = detect_lines(img_crop)
-    
+
+    if (debug):
+        displayDebugImage(img_crop)
+
+
     if len(lines) > 1:
         lines = merge_lines(lines)
         if len(lines) == 2:
