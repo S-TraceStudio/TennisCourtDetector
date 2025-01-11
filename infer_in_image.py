@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_path', type=str, help='path to output image')
     parser.add_argument('--use_refine_kps', action='store_true', help='whether to use refine kps postprocessing')
     parser.add_argument('--use_homography', action='store_true', help='whether to use homography postprocessing')
+    parser.add_argument('--debug', action='store_true', help='whether to display images for debugging')
     args = parser.parse_args()
 
     model = BallTrackerNet(out_channels=15)
@@ -53,7 +54,7 @@ if __name__ == '__main__':
         heatmap = (pred[kps_num]*255).astype(np.uint8)
         x_pred, y_pred = postprocess(heatmap, scaleX, scaleY, low_thresh=170, max_radius=25)
         if args.use_refine_kps and kps_num not in [8, 12, 9] and x_pred and y_pred:
-            x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred))
+            x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred), debug=args.debug)
         points.append((x_pred, y_pred))
 
     if args.use_homography:
@@ -71,4 +72,3 @@ if __name__ == '__main__':
 
     # Display result
     displayDebugImage(image)
-    
