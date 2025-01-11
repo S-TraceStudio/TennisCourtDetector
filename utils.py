@@ -3,6 +3,7 @@ from sympy import Line
 import sympy
 import json
 from pathlib import Path
+import cv2
 
 # Create a JSON Encoder class
 class json_serialize(json.JSONEncoder):
@@ -88,3 +89,8 @@ def replace_file_extension(filename, extension):
     new_filename = Path(filename)
     filename_replace_ext = new_filename.with_suffix(extension)
     return filename_replace_ext
+
+def displayDebugImage(debugImage):
+    cv2.imshow('Debug Image', debugImage)
+    cv2.waitKey(0)
+    cv2.destroyWindow('Debug Image')
