@@ -27,11 +27,25 @@ def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
     lines = detect_lines(img_crop)
 
     if (debug):
-        displayDebugImage(img_crop)
-
+        displayDebugImage(img_crop,scale=5)
+        print("Lines count",len(lines))
+        # Afficher les lignes
+        linesImage = img_crop.copy()
+        if lines is not None:
+            for line in lines:
+                x1, y1, x2, y2 = line
+                cv2.line(linesImage, (x1, y1), (x2, y2), (0, 0, 0), 1)
+            displayDebugImage(linesImage,scale=5)
 
     if len(lines) > 1:
         lines = merge_lines(lines)
+        if (debug):
+            if lines is not None:
+                for line in lines:
+                    x1, y1, x2, y2 = line
+                    cv2.line(linesImage, (x1, y1), (x2, y2), (128, 128, 128), 1)
+                displayDebugImage(linesImage,scale=5)
+
         if len(lines) == 2:
             inters = line_intersection(lines[0], lines[1])
             if inters:
