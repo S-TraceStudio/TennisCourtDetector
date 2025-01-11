@@ -65,8 +65,7 @@ if __name__ == '__main__':
 
     for j in range(len(points)):
         if points[j][0] is not None:
-            image = cv2.circle(image, (int(points[j][0]), int(points[j][1])),
-                               radius=0, color=(0, 0, 255), thickness=10)
+            image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
 
     cv2.imwrite(args.output_path, image)
 
