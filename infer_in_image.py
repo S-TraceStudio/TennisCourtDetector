@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from postprocess import postprocess, refine_kps
 from homography import get_trans_matrix, refer_kps
 import argparse
+from utils import displayDebugImage
 
 if __name__ == '__main__':
 
@@ -33,13 +34,24 @@ if __name__ == '__main__':
     inp = torch.tensor(np.rollaxis(inp, 2, 0))
     inp = inp.unsqueeze(0)
 
+    h, w, c = image.shape
+    print('width: ', w)
+    print('height: ', h)
+    print('channel:', c)
+
+    scaleX = w / OUTPUT_WIDTH
+    scaleY = h / OUTPUT_HEIGHT
+
+    print('scaleX:', scaleX)
+    print('scaleY:', scaleY)
+
     out = model(inp.float().to(device))[0]
     pred = F.sigmoid(out).detach().cpu().numpy()
 
     points = []
     for kps_num in range(14):
         heatmap = (pred[kps_num]*255).astype(np.uint8)
-        x_pred, y_pred = postprocess(heatmap, low_thresh=170, max_radius=25)
+        x_pred, y_pred = postprocess(heatmap, scaleX, scaleY, low_thresh=170, max_radius=25)
         if args.use_refine_kps and kps_num not in [8, 12, 9] and x_pred and y_pred:
             x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred))
         points.append((x_pred, y_pred))
@@ -56,3 +68,7 @@ if __name__ == '__main__':
                                radius=0, color=(0, 0, 255), thickness=10)
 
     cv2.imwrite(args.output_path, image)
+
+    # Display result
+    displayDebugImage(image)
+    
