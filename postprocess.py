@@ -39,6 +39,11 @@ def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
 
     if len(lines) > 1:
         lines = merge_lines(lines)
+        print("Lines merged count",len(lines))
+
+        if len(lines) != 2:
+            lines = merge_lines(lines)
+
         if (debug):
             if lines is not None:
                 for line in lines:
