@@ -94,4 +94,5 @@ def displayDebugImage(debugImage,scale=1):
     scaled_image = cv2.resize(debugImage, None, fx=scale, fy=scale,interpolation=cv2.INTER_LINEAR)
     cv2.imshow('Debug Image', scaled_image)
     cv2.waitKey(0)
-    cv2.destroyWindow('Debug Image')
+    #cv2.destroyWindow('Debug Image')
+    cv2.destroyAllWindows()
