@@ -26,6 +26,9 @@ def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
     img_crop = img[x_min:x_max, y_min:y_max]
     lines = detect_lines(img_crop,debug)
 
+    # if (debug):
+    #     newIntersectionMethod(img_crop)
+
     if (debug):
         displayDebugImage(img_crop,scale=5)
         print("Lines count",len(lines))
@@ -101,5 +104,36 @@ def merge_lines(lines):
                                         dtype=np.int32)
                         mask[i + j + 1] = False
             new_lines.append(line)  
-    return new_lines       
+    return new_lines
+
+def find_intersection(line1, line2):
+    x1, y1, x2, y2 = line1
+    x3, y3, x4, y4 = line2
+    denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    if denominator == 0:
+        return None # Lines are parallel
+    px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denominator
+    py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denominator
+
+    return px, py
+
+def newIntersectionMethod(image):
+    newIntersectionImage = image.copy()
+    gray = cv2.cvtColor(newIntersectionImage, cv2.COLOR_BGR2GRAY)
+    # Detect edges
+    edges = cv2.Canny(gray, 10, 200, apertureSize=3)
+    displayDebugImage(edges, scale=5)
+    # Detect lines using Hough Line Transform
+    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=100, minLineLength=10, maxLineGap=1)
+    # Find intersections if lines is not None:
+    for i in range(len(lines)):
+        for j in range(i + 1, len(lines)):
+            line1 = lines[i][0]
+            line2 = lines[j][0]
+            intersection_point = find_intersection(line1, line2)
+            if intersection_point:
+                px, py = intersection_point
+                cv2.circle(newIntersectionImage, (int(px), int(py)), 5, (0, 0, 255), -1) #
+    # Display the result
+    displayDebugImage(newIntersectionImage, scale=5)
 
