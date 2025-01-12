@@ -24,17 +24,22 @@ def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
     y_max = min(img_width, y_ct+crop_size)
 
     img_crop = img[x_min:x_max, y_min:y_max]
-    lines = detect_lines(img_crop)
+    lines = detect_lines(img_crop,debug)
 
     if (debug):
         displayDebugImage(img_crop,scale=5)
         print("Lines count",len(lines))
+        lineCount = len(lines)
         # Afficher les lignes
         linesImage = img_crop.copy()
         if lines is not None:
+            i = 0
             for line in lines:
                 x1, y1, x2, y2 = line
-                cv2.line(linesImage, (x1, y1), (x2, y2), (0, 0, 0), 1)
+                colorMax = 200
+                color = (i*colorMax/lineCount,i*colorMax/lineCount,i*colorMax/lineCount)
+                cv2.line(linesImage, (x1, y1), (x2, y2), color, 1)
+                i += 1
             displayDebugImage(linesImage,scale=5)
 
     if len(lines) > 1:
@@ -48,7 +53,7 @@ def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
             if lines is not None:
                 for line in lines:
                     x1, y1, x2, y2 = line
-                    cv2.line(linesImage, (x1, y1), (x2, y2), (128, 128, 128), 1)
+                    cv2.line(linesImage, (x1, y1), (x2, y2), (200, 0, 0), 1)
                 displayDebugImage(linesImage,scale=5)
 
         if len(lines) == 2:
@@ -62,9 +67,13 @@ def refine_kps(img, x_ct, y_ct, crop_size=40, debug=False):
     return refined_y_ct, refined_x_ct
 
 
-def detect_lines(image):
+def detect_lines(image, debug=False):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    if (debug):
+        displayDebugImage(gray, scale=5)
     gray = cv2.threshold(gray, 155, 255, cv2.THRESH_BINARY)[1]
+    if (debug):
+        displayDebugImage(gray, scale=5)
     lines = cv2.HoughLinesP(gray, 1, np.pi / 180, 30, minLineLength=10, maxLineGap=30)
     lines = np.squeeze(lines) 
     if len(lines.shape) > 0:
