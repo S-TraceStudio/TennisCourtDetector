@@ -7,6 +7,7 @@ from postprocess import postprocess, refine_kps
 from homography import get_trans_matrix, refer_kps
 import argparse
 from utils import displayDebugImage
+from court_line_pixel_detector import CourtLinePixelDetector
 
 if __name__ == '__main__':
 
@@ -17,57 +18,71 @@ if __name__ == '__main__':
     parser.add_argument('--use_refine_kps', action='store_true', help='whether to use refine kps postprocessing')
     parser.add_argument('--use_homography', action='store_true', help='whether to use homography postprocessing')
     parser.add_argument('--debug', action='store_true', help='whether to display images for debugging')
+    parser.add_argument('--cv', action='store_true', help='whether to use classical Computer Vision method or ML method')
+
     args = parser.parse_args()
 
-    model = BallTrackerNet(out_channels=15)
-    print("Cuda available : ", torch.cuda.is_available())
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model = model.to(device)
-    model.load_state_dict(torch.load(args.model_path, map_location=device))
-    model.eval()
-    
-    OUTPUT_WIDTH = 640
-    OUTPUT_HEIGHT = 360
+    if args.cv:
+        image = cv2.imread(args.input_path)
 
-    image = cv2.imread(args.input_path)
-    img = cv2.resize(image, (OUTPUT_WIDTH, OUTPUT_HEIGHT))
-    inp = (img.astype(np.float32) / 255.)
-    inp = torch.tensor(np.rollaxis(inp, 2, 0))
-    inp = inp.unsqueeze(0)
+        court_line_pixel_detector = CourtLinePixelDetector()
 
-    h, w, c = image.shape
-    print('width: ', w)
-    print('height: ', h)
-    print('channel:', c)
+        binaryImage = court_line_pixel_detector.run(image,args.debug)
 
-    scaleX = w / OUTPUT_WIDTH
-    scaleY = h / OUTPUT_HEIGHT
+        if args.debug:
+            displayDebugImage(image)
+            displayDebugImage(binaryImage)
 
-    print('scaleX:', scaleX)
-    print('scaleY:', scaleY)
+    else:
+        model = BallTrackerNet(out_channels=15)
+        print("Cuda available : ", torch.cuda.is_available())
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        model = model.to(device)
+        model.load_state_dict(torch.load(args.model_path, map_location=device))
+        model.eval()
 
-    out = model(inp.float().to(device))[0]
-    pred = F.sigmoid(out).detach().cpu().numpy()
+        OUTPUT_WIDTH = 640
+        OUTPUT_HEIGHT = 360
 
-    points = []
-    for kps_num in range(14):
-        heatmap = (pred[kps_num]*255).astype(np.uint8)
-        x_pred, y_pred = postprocess(heatmap, scaleX, scaleY, low_thresh=170, max_radius=25)
-        if args.use_refine_kps and kps_num not in [8, 12, 9] and x_pred and y_pred:
-            x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred), debug=args.debug)
-        points.append((x_pred, y_pred))
+        image = cv2.imread(args.input_path)
+        img = cv2.resize(image, (OUTPUT_WIDTH, OUTPUT_HEIGHT))
+        inp = (img.astype(np.float32) / 255.)
+        inp = torch.tensor(np.rollaxis(inp, 2, 0))
+        inp = inp.unsqueeze(0)
 
-    if args.use_homography:
-        matrix_trans = get_trans_matrix(points)
-        if matrix_trans is not None:
-            points = cv2.perspectiveTransform(refer_kps, matrix_trans)
-            points = [np.squeeze(x) for x in points]
+        h, w, c = image.shape
+        print('width: ', w)
+        print('height: ', h)
+        print('channel:', c)
 
-    for j in range(len(points)):
-        if points[j][0] is not None:
-            image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
+        scaleX = w / OUTPUT_WIDTH
+        scaleY = h / OUTPUT_HEIGHT
 
-    cv2.imwrite(args.output_path, image)
+        print('scaleX:', scaleX)
+        print('scaleY:', scaleY)
 
-    # Display result
-    displayDebugImage(image)
+        out = model(inp.float().to(device))[0]
+        pred = F.sigmoid(out).detach().cpu().numpy()
+
+        points = []
+        for kps_num in range(14):
+            heatmap = (pred[kps_num]*255).astype(np.uint8)
+            x_pred, y_pred = postprocess(heatmap, scaleX, scaleY, low_thresh=170, max_radius=25)
+            if args.use_refine_kps and kps_num not in [8, 12, 9] and x_pred and y_pred:
+                x_pred, y_pred = refine_kps(image, int(y_pred), int(x_pred), debug=args.debug)
+            points.append((x_pred, y_pred))
+
+        if args.use_homography:
+            matrix_trans = get_trans_matrix(points)
+            if matrix_trans is not None:
+                points = cv2.perspectiveTransform(refer_kps, matrix_trans)
+                points = [np.squeeze(x) for x in points]
+
+        for j in range(len(points)):
+            if points[j][0] is not None:
+                image = cv2.circle(image, (int(points[j][0]), int(points[j][1])), radius=0, color=(0, 0, 255), thickness=10)
+
+        cv2.imwrite(args.output_path, image)
+
+        # Display result
+        displayDebugImage(image)
