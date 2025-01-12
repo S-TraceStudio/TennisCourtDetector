@@ -59,8 +59,7 @@ class CourtLinePixelDetector:
         # Fill the pixel image based on the isLinePixel function
         for x in range(image.shape[1]):
             for y in range(image.shape[0]):
-                a = is_line_pixel(image, x, y)
-                pixel_image[y, x] = is_line_pixel(image, x, y)
+                pixel_image[y, x] = self.is_line_pixel(image, x, y)
 
         return pixel_image
 
