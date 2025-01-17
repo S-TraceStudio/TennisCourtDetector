@@ -21,14 +21,17 @@ class CourtLinePixelDetector:
         self.parameters = parameters
 
     def run(self, frame, debug=False):
+        print("Luminance channel")
         luminance_channel = self.get_luminance_channel(frame,debug)
         if debug:
             displayDebugImage(luminance_channel)
 
+        print("Detect line pixel")
         line_pixels = self.detect_line_pixels(luminance_channel)
         if debug:
             displayDebugImage(line_pixels)
 
+        print("Filter line pixels")
         filtered_pixels = self.filter_line_pixels(line_pixels, luminance_channel)
         if debug:
             displayDebugImage(filtered_pixels)
@@ -66,10 +69,23 @@ class CourtLinePixelDetector:
 
         return pixel_image
 
-    def filter_line_pixels(self, binary_image, luminance_image):
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (self.parameters.kernelSize, self.parameters.kernelSize))
-        filtered_image = cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
-        return filtered_image
+    def filter_line_pixels(self, binary_image, luminance_image, debug = False):
+        dx2, dxy, dy2 = self.compute_structure_tensor_elements(luminance_image)
+        output_image = np.full((binary_image.shape[0], binary_image.shape[1]), global_params.bg_value, dtype=np.uint8)
+
+        for x in range(binary_image.shape[1]):
+            for y in range(binary_image.shape[0]):
+                value = binary_image[y, x]
+                if value == global_params.fg_value:
+                    t = np.array([[dx2[y, x], dxy[y, x]], [dxy[y, x], dy2[y, x]]], dtype=np.float32)
+                    l = cv2.eigen(t)[1]
+
+                    if (l[0, 0] > 4 * l[1, 0]):
+                        output_image[y, x] = global_params.fg_value
+        if debug:
+            displayDebugImage(output_image)
+        return output_image
+
 
     def is_line_pixel(self, image, x, y):
         if x < self.parameters.t or image.shape[1] - x <= self.parameters.t:
@@ -105,11 +121,16 @@ class CourtLinePixelDetector:
         return global_params.bg_value;
 
 
-
-    def compute_structure_tensor_elements(self, image):
-        dx = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize=self.parameters.gradientKernelSize)
-        dy = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize=self.parameters.gradientKernelSize)
-        dx2 = dx * dx
-        dxy = dx * dy
-        dy2 = dy * dy
+    def compute_structure_tensor_elements(self,image):
+        float_image = image.astype(np.float32)
+        float_image = cv2.GaussianBlur(float_image, (5, 5), 0)
+        dx = cv2.Sobel(float_image, cv2.CV_32F, 1, 0, ksize=self.parameters.gradientKernelSize)
+        dy = cv2.Sobel(float_image, cv2.CV_32F, 0, 1, ksize=self.parameters.gradientKernelSize)
+        dx2 = cv2.multiply(dx, dx)
+        dxy = cv2.multiply(dx, dy)
+        dy2 = cv2.multiply(dy, dy)
+        kernel = np.ones((self.parameters.kernelSize, self.parameters.kernelSize), np.float32)
+        dx2 = cv2.filter2D(dx2, -1, kernel)
+        dxy = cv2.filter2D(dxy, -1, kernel)
+        dy2 = cv2.filter2D(dy2, -1, kernel)
         return dx2, dxy, dy2
