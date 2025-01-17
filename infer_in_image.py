@@ -30,7 +30,9 @@ if __name__ == '__main__':
         binaryImage = court_line_pixel_detector.run(image,args.debug)
 
         if args.debug:
+            print("Image")
             displayDebugImage(image)
+            print("Binary image")
             displayDebugImage(binaryImage)
 
     else:
