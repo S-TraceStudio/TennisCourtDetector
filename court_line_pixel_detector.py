@@ -78,6 +78,8 @@ class CourtLinePixelDetector:
                 value = binary_image[y, x]
                 if value == global_params.fg_value:
                     t = np.array([[dx2[y, x], dxy[y, x]], [dxy[y, x], dy2[y, x]]], dtype=np.float32)
+
+                    # To Do : check if we do the right operation here
                     l = cv2.eigen(t)[1]
 
                     if (l[0, 0] > 4 * l[1, 0]):
