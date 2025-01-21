@@ -120,8 +120,7 @@ class CourtLinePixelDetector:
 
         if (value - top_value > self.parameters.diffThreshold) and (value - lower_value > self.parameters.diffThreshold):
             return global_params.fg_value
-        return global_params.bg_value;
-
+        return global_params.bg_value
 
     def compute_structure_tensor_elements(self,image):
         float_image = image.astype(np.float32)
