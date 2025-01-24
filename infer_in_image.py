@@ -8,6 +8,7 @@ from homography import get_trans_matrix, refer_kps
 import argparse
 from utils import displayDebugImage
 from court_line_pixel_detector import CourtLinePixelDetector
+from court_line_candidate_detector import CourtLineCandidateDetector
 
 if __name__ == '__main__':
 
@@ -26,14 +27,20 @@ if __name__ == '__main__':
         image = cv2.imread(args.input_path)
 
         court_line_pixel_detector = CourtLinePixelDetector()
+        court_line_candidate_detector = CourtLineCandidateDetector()
 
-        binaryImage = court_line_pixel_detector.run(image,args.debug)
+        binary_image = court_line_pixel_detector.run(image,args.debug)
+        lines = court_line_candidate_detector.run(binary_image,image)
+
+
+
+        
 
         if args.debug:
             #print("Image")
             #displayDebugImage(image)
             print("Binary image")
-            displayDebugImage(binaryImage)
+            displayDebugImage(binary_image)
 
     else:
         model = BallTrackerNet(out_channels=15)

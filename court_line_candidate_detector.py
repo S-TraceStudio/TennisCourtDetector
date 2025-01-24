@@ -1,22 +1,80 @@
-
+from line import Line
+import cv2
+import numpy as np
+from global_paramaters import global_params
 
 class CourtLineCandidateDetector:
     class Parameters:
         def __init__(self):
             self.houghThreshold = 240
-            self.distanceThreshold = 8 # in pixels
+            self.distanceThreshold = 8  # in pixels
             self.refinementIterations = 5
 
-            def __init__(self, parameters=None):
-                if parameters is None:
-                    self.parameters = self.Parameters()
-                else:
-                    self.parameters = parameters
+    debug = True
+    windowName = "Court Line Candidate Detector"
 
-    debug = False
+    def __init__(self, parameters=None):
+        if parameters is None:
+            self.parameters = self.Parameters()
+        else:
+            self.parameters = parameters
 
+    def run(self, binaryImage, rgbImage):
+        lines = self.extractLines(binaryImage, rgbImage)
+        for i in range(self.parameters.refinementIterations):
+            print(f"Iteration: {i}")
+            self.refineLineParameters(lines, binaryImage, rgbImage)
+            self.removeDuplicateLines(lines, rgbImage)
+        return lines
 
+    def extractLines(self, binaryImage, rgbImage):
+        lines = []
+        tmpLines = cv2.HoughLines(binaryImage, 1, np.pi / 180, self.parameters.houghThreshold)
+        if tmpLines is not None:
+            for rho, theta in tmpLines[:, 0]:
+                lines.append(Line.fromRhoTheta(rho, theta))
+        if self.debug:
+            print(f"CourtLineCandidateDetector::extractLines line count = {len(lines)}")
+            image = rgbImage.copy()
+            self.drawLines(lines, image)
+            self.displayImage(self.windowName, image)
+        return lines
 
+    def refineLineParameters(self, lines, binaryImage, rgbImage):
+        for i, line in enumerate(lines):
+            lines[i] = self.getRefinedParameters(line, binaryImage, rgbImage)
+        if self.debug:
+            image = rgbImage.copy()
+            self.drawLines(lines, image)
+            self.displayImage(self.windowName, image)
+
+    def getRefinedParameters(self, line, binaryImage, rgbImage):
+        A = self.getClosePointsMatrix(line, binaryImage, rgbImage)
+        [vx, vy, x, y] = cv2.fitLine(A, cv2.DIST_L2, 0, 0.01, 0.01)
+        return Line((x, y), (vx, vy))
+
+    def getClosePointsMatrix(self, line, binaryImage, rgbImage):
+        points = []
+        for x in range(binaryImage.shape[1]):
+            for y in range(binaryImage.shape[0]):
+                if binaryImage[y, x] == global_params.fg_Value:
+                    distance = line.getDistance((x, y))
+                    if distance < self.parameters.distanceThreshold:
+                        points.append((x, y))
+        return np.array(points, dtype=np.float32)
+
+    def removeDuplicateLines(self, lines, rgbImage):
+        self.image = rgbImage.copy()
+        unique_lines = []
+        for line in lines:
+            if not any(line.isDuplicate(existing_line) for existing_line in unique_lines):
+                unique_lines.append(line)
+        lines[:] = unique_lines
+        if self.debug:
+            print(f"CourtLineCandidateDetector::removeDuplicateLines line count = {len(lines)}")
+            image = rgbImage.copy()
+            self.drawLines(lines, image)
+            self.displayImage(self.windowName, image)
 
 
 
