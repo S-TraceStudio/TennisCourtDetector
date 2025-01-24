@@ -32,7 +32,7 @@ class CourtLineCandidateDetector:
         tmpLines = cv2.HoughLines(binaryImage, 1, np.pi / 180, self.parameters.houghThreshold)
         if tmpLines is not None:
             for rho, theta in tmpLines[:, 0]:
-                lines.append(Line.fromRhoTheta(rho, theta))
+                lines.append(Line.from_rho_theta(rho, theta))
         if self.debug:
             print(f"CourtLineCandidateDetector::extractLines line count = {len(lines)}")
             image = rgbImage.copy()
