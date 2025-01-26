@@ -60,7 +60,8 @@ class CourtLineCandidateDetector:
         for x in range(binaryImage.shape[1]):
             for y in range(binaryImage.shape[0]):
                 if binaryImage[y, x] == global_params.fg_value:
-                    distance = line.get_distance((x, y))
+                    point = (float(x), float(y))
+                    distance = line.get_distance(point)
                     if distance < self.parameters.distanceThreshold:
                         points.append((x, y))
         return np.array(points, dtype=np.float32)

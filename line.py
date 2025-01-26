@@ -37,8 +37,8 @@ class Line:
 
     def get_point_on_line_closest_to(self, point):
         n, c = self.to_implicit()
-        q = c - np.dot(n, point)
-        return point - q * n
+        q = float(c - np.dot(n, point))
+        return point - q * np.asarray(n)
 
     def is_duplicate(self, other_line):
         n1, c1 = self.to_implicit()
