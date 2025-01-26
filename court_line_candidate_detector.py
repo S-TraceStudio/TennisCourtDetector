@@ -2,6 +2,8 @@ from line import Line
 import cv2
 import numpy as np
 from global_paramaters import global_params
+from debug_helper import draw_lines
+from utils import displayDebugImage
 
 class CourtLineCandidateDetector:
     class Parameters:
@@ -36,8 +38,8 @@ class CourtLineCandidateDetector:
         if self.debug:
             print(f"CourtLineCandidateDetector::extractLines line count = {len(lines)}")
             image = rgbImage.copy()
-            self.drawLines(lines, image)
-            self.displayImage(self.windowName, image)
+            draw_lines(lines, image)
+            displayDebugImage(image)
         return lines
 
     def refineLineParameters(self, lines, binaryImage, rgbImage):
@@ -45,8 +47,8 @@ class CourtLineCandidateDetector:
             lines[i] = self.getRefinedParameters(line, binaryImage, rgbImage)
         if self.debug:
             image = rgbImage.copy()
-            self.drawLines(lines, image)
-            self.displayImage(self.windowName, image)
+            draw_lines(lines, image)
+            displayDebugImage(image)
 
     def getRefinedParameters(self, line, binaryImage, rgbImage):
         A = self.getClosePointsMatrix(line, binaryImage, rgbImage)
@@ -57,8 +59,8 @@ class CourtLineCandidateDetector:
         points = []
         for x in range(binaryImage.shape[1]):
             for y in range(binaryImage.shape[0]):
-                if binaryImage[y, x] == global_params.fg_Value:
-                    distance = line.getDistance((x, y))
+                if binaryImage[y, x] == global_params.fg_value:
+                    distance = line.get_distance((x, y))
                     if distance < self.parameters.distanceThreshold:
                         points.append((x, y))
         return np.array(points, dtype=np.float32)
@@ -73,8 +75,8 @@ class CourtLineCandidateDetector:
         if self.debug:
             print(f"CourtLineCandidateDetector::removeDuplicateLines line count = {len(lines)}")
             image = rgbImage.copy()
-            self.drawLines(lines, image)
-            self.displayImage(self.windowName, image)
+            draw_lines(lines, image)
+            displayDebugImage(self.windowName, image)
 
 
 
