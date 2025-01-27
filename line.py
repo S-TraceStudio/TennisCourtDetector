@@ -3,7 +3,7 @@ from geometry import perpendicular
 
 class Line:
     def __init__(self, point, vector):
-        self.u = point
+        self.u = np.asarray(point)
         self.v = self.normalize(vector)
 
     @staticmethod
