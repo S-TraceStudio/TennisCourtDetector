@@ -53,7 +53,8 @@ class CourtLineCandidateDetector:
     def getRefinedParameters(self, line, binaryImage, rgbImage):
         A = self.getClosePointsMatrix(line, binaryImage, rgbImage)
         [vx, vy, x, y] = cv2.fitLine(A, cv2.DIST_L2, 0, 0.01, 0.01)
-        return Line((x, y), (vx, vy))
+        line = Line([x.item(), y.item()], [vx.item(), vy.item()])
+        return line
 
     def getClosePointsMatrix(self, line, binaryImage, rgbImage):
         points = []
@@ -70,14 +71,14 @@ class CourtLineCandidateDetector:
         self.image = rgbImage.copy()
         unique_lines = []
         for line in lines:
-            if not any(line.isDuplicate(existing_line) for existing_line in unique_lines):
+            if not any(line.is_duplicate(existing_line) for existing_line in unique_lines):
                 unique_lines.append(line)
         lines[:] = unique_lines
         if self.debug:
             print(f"CourtLineCandidateDetector::removeDuplicateLines line count = {len(lines)}")
             image = rgbImage.copy()
             draw_lines(lines, image)
-            displayDebugImage(self.windowName, image)
+            displayDebugImage(image,widow_name=self.windowName)
 
 
 
