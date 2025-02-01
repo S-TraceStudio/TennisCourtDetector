@@ -34,8 +34,6 @@ if __name__ == '__main__':
 
 
 
-        
-
         if args.debug:
             #print("Image")
             #displayDebugImage(image)
