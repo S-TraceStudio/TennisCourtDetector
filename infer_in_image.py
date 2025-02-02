@@ -9,6 +9,7 @@ import argparse
 from utils import displayDebugImage
 from court_line_pixel_detector import CourtLinePixelDetector
 from court_line_candidate_detector import CourtLineCandidateDetector
+from tennis_court_fitter import TennisCourtFitter
 
 if __name__ == '__main__':
 
@@ -28,10 +29,11 @@ if __name__ == '__main__':
 
         court_line_pixel_detector = CourtLinePixelDetector()
         court_line_candidate_detector = CourtLineCandidateDetector()
+        tennis_court_fitter = TennisCourtFitter()
 
         binary_image = court_line_pixel_detector.run(image,args.debug)
         lines = court_line_candidate_detector.run(binary_image,image)
-
+        model = tennis_court_fitter.run(lines,binary_image,image)
 
 
         if args.debug:
