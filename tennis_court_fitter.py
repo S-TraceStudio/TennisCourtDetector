@@ -19,6 +19,23 @@ class TennisCourtFitter:
         self.sort_horizontal_lines(hLines, rgbImage)
         self.sort_vertical_lines(vLines, rgbImage)
 
+        hLinePairs = TennisCourtModel.get_possible_line_pairs(hLines);
+        vLinePairs = TennisCourtModel.get_possible_line_pairs(vLines);
+
+        if self.debug:
+            print(f"Horizontal line pairs = {len(hLinePairs)}")
+            print(f"Vertical line pairs = {len(vLinePairs)}")
+
+
+
+
+
+
+
+
+
+
+            
 
 
 
