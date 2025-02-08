@@ -3,7 +3,8 @@ import numpy as np
 from line import Line
 from tennis_court_model import TennisCourtModel
 from utils import displayDebugImage
-from debug_helper import draw_lines
+from debug_helper import draw_lines, draw_line
+from geometry import sort_lines_by_distance_to_point
 
 class TennisCourtFitter:
     debug = True
@@ -15,7 +16,7 @@ class TennisCourtFitter:
     def run(self, lines, binaryImage, rgbImage):
         hLines, vLines = self.get_horizontal_and_vertical_lines(lines, rgbImage)
 
-        #self.sortHorizontalLines(hLines, rgbImage)
+        self.sort_horizontal_lines(hLines, rgbImage)
         #self.sortVerticalLines(vLines, rgbImage)
 
 
@@ -41,7 +42,15 @@ class TennisCourtFitter:
         return hLines, vLines
 
 
+    def sort_horizontal_lines(self, hLines, rgb_image):
+        x = rgb_image.shape[1] / 2.0
+        sort_lines_by_distance_to_point(hLines, (x, 0))
 
+        if self.debug:
+            for line in hLines:
+                image = rgb_image.copy()
+                draw_line(line, image, color=(255, 0, 0))
+                displayDebugImage(image, widow_name=self.windowName)
 
 
 
