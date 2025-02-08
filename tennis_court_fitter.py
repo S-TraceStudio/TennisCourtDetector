@@ -5,37 +5,32 @@ from tennis_court_model import TennisCourtModel
 from utils import displayDebugImage
 from debug_helper import draw_lines, draw_line
 from geometry import sort_lines_by_distance_to_point
+from global_paramaters import global_params
 
 class TennisCourtFitter:
     debug = True
     windowName = "TennisCourtFitter"
+    hLinePairs = []
+    vLinePairs = []
 
     def __init__(self):
         debug = True
 
-    def run(self, lines, binaryImage, rgbImage):
-        hLines, vLines = self.get_horizontal_and_vertical_lines(lines, rgbImage)
+    def run(self, lines, binary_image, rgb_image):
+        hLines, vLines = self.get_horizontal_and_vertical_lines(lines, rgb_image)
 
-        self.sort_horizontal_lines(hLines, rgbImage)
-        self.sort_vertical_lines(vLines, rgbImage)
+        self.sort_horizontal_lines(hLines, rgb_image)
+        self.sort_vertical_lines(vLines, rgb_image)
 
-        hLinePairs = TennisCourtModel.get_possible_line_pairs(hLines);
-        vLinePairs = TennisCourtModel.get_possible_line_pairs(vLines);
+        self.hLinePairs = TennisCourtModel.get_possible_line_pairs(hLines);
+        self.vLinePairs = TennisCourtModel.get_possible_line_pairs(vLines);
 
         if self.debug:
-            print(f"Horizontal line pairs = {len(hLinePairs)}")
-            print(f"Vertical line pairs = {len(vLinePairs)}")
+            print(f"Horizontal line pairs = {len(self.hLinePairs)}")
+            print(f"Vertical line pairs = {len(self.vLinePairs)}")
 
+        self.find_best_model_fit(binary_image, rgb_image)
 
-
-
-
-
-
-
-
-
-            
 
 
 
@@ -77,6 +72,23 @@ class TennisCourtFitter:
                 image = rgb_image.copy()
                 draw_line(line, image, color=(0, 255, 0))
                 displayDebugImage(image, widow_name=self.windowName)
+
+    def find_best_model_fit(self, binary_image, rgb_image):
+        count = 0
+        total_count = len(self.hLinePairs)+len(self.vLinePairs)
+
+        bestScore = global_params.initial_fit_score
+
+        for h_line_pair in self.hLinePairs:
+            for v_line_pair in self.vLinePairs:
+                count += 1
+
+                model = TennisCourtModel()
+
+
+
+                
+
 
 
 
