@@ -1,5 +1,6 @@
 import math
 from typing import List, Tuple
+import functools
 
 def length(v: Tuple[float, float]) -> float:
     return math.sqrt(v[0]**2 + v[1]**2)
@@ -21,8 +22,8 @@ class LineComparator:
         self.p = point
 
     def __call__(self, lineA, lineB):
-        return lineA.getDistance(self.p) < lineB.getDistance(self.p)
+        return lineA.get_distance(self.p) < lineB.get_distance(self.p)
 
-def sortLinesByDistanceToPoint(lines: List, point: Tuple[float, float]) -> None:
-    lines.sort(key=LineComparator(point))
+def sort_lines_by_distance_to_point(lines: List, point: Tuple[float, float]) -> None:
+    lines.sort(key=functools.cmp_to_key(LineComparator(point)))
 
