@@ -13,6 +13,7 @@ class TennisCourtModel:
     court_points = []
 
     def __init__(self):
+        self.court_points.clear()
         h_vector = np.array([1.0, 0.0], dtype=np.float32)
         upper_base_line = Line(np.array([0.0, 0.0], dtype=np.float32), h_vector)
         upper_service_line = Line(np.array([0.0, 5.49], dtype=np.float32), h_vector)
@@ -105,6 +106,7 @@ class TennisCourtModel:
         if compute[0]:
             self.court_points.append(compute[1].copy())  # P16
 
+        # print(f"Total points = {len(self.court_points)}")
         assert len(self.court_points) == 16
 
     @staticmethod
