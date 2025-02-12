@@ -84,7 +84,21 @@ class TennisCourtFitter:
                 count += 1
 
                 model = TennisCourtModel()
+                score = model.fit(h_line_pair, v_line_pair, binary_image, rgb_image)
+                if score > bestScore:
+                    bestScore = score
+                    bestModel = model
 
+                    print(f"Best score: {bestScore}")
+
+            percentage = float(count) / total_count
+            print(f"percentage: {percentage} %")
+
+        if self.debug:
+            print(f"Best model score = {bestScore}")
+            image = rgb_image.copy()
+            bestModel.drawModel(image)
+            displayDebugImage(image, widow_name=self.windowName )
 
 
                 
