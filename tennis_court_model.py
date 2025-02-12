@@ -123,17 +123,21 @@ class TennisCourtModel:
         v = []
         point = np.array([0.0, 0.0], dtype=np.float32)
 
-        if hLinePair[0].compute_intersection_point(vLinePair[0], point):
-            v.append(point)
+        compute = hLinePair[0].compute_intersection_point(vLinePair[0])
+        if compute[0]:
+            v.append(compute[1].copy())
 
-        if hLinePair[0].compute_intersection_point(vLinePair[1], point):
-            v.append(point)
+        compute = hLinePair[0].compute_intersection_point(vLinePair[1])
+        if compute[0]:
+            v.append(compute[1].copy())
 
-        if hLinePair[1].compute_intersection_point(vLinePair[0], point):
-            v.append(point)
+        compute = hLinePair[1].compute_intersection_point(vLinePair[0])
+        if compute[0]:
+            v.append(compute[1].copy())
 
-        if hLinePair[1].compute_intersection_point(vLinePair[1], point):
-            v.append(point)
+        compute = hLinePair[1].compute_intersection_point(vLinePair[1])
+        if compute[0]:
+            v.append(compute[1].copy())
 
         assert len(v) == 4
         return v
