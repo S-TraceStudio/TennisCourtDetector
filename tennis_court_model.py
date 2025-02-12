@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 from line import Line
+from global_paramaters import global_params
+from geometry import distance, normalize
 
 LinePair = tuple[cv2.line, cv2.line]
 
@@ -121,18 +123,82 @@ class TennisCourtModel:
         v = []
         point = np.array([0.0, 0.0], dtype=np.float32)
 
-        if hLinePair.first.compute_intersection_point(vLinePair.first, point):
+        if hLinePair[0].compute_intersection_point(vLinePair[0], point):
             v.append(point)
 
-        if hLinePair.first.compute_intersection_point(vLinePair.second, point):
+        if hLinePair[0].compute_intersection_point(vLinePair[1], point):
             v.append(point)
 
-        if hLinePair.second.compute_intersection_point(vLinePair.first, point):
+        if hLinePair[1].compute_intersection_point(vLinePair[0], point):
             v.append(point)
 
-        if hLinePair.second.compute_intersection_point(vLinePair.second, point):
+        if hLinePair[1].compute_intersection_point(vLinePair[1], point):
             v.append(point)
 
         assert len(v) == 4
-
         return v
+
+    def fit(self, h_line_pair, v_line_pair, binary_image, rgb_image):
+        best_score = global_params.initial_fit_score
+        points = self.get_intersection_points(h_line_pair, v_line_pair)
+
+        for model_h_line_pair in self.h_line_pairs:
+            for model_v_line_pair in self.v_line_pairs:
+                model_points = self.get_intersection_points(model_h_line_pair, model_v_line_pair)
+                matrix = cv2.getPerspectiveTransform(np.array(model_points, dtype=np.float32), np.array(points, dtype=np.float32))
+                transformed_model_points = np.zeros((16, 2), dtype=np.float32)
+                transformed_model_points = cv2.perspectiveTransform(np.array([self.court_points], dtype=np.float32), matrix)[0]
+                score = self.evaluate_model(transformed_model_points, binary_image)
+                if score > best_score:
+                    best_score = score
+                    transformation_matrix = matrix
+
+    def compute_score_for_line_segment(self, start, end, binary_image):
+        score = 0
+        fg_score = 1
+        bg_score = -0.5
+        length = int(round(distance(start, end)))
+
+        vec = normalize(np.array(end) - np.array(start))
+
+        for i in range(length):
+            p = np.array(start) + i * vec
+            x = int(round(p[0]))
+            y = int(round(p[1]))
+            if self.is_inside_the_image(x, y, binary_image):
+                image_value = binary_image[y, x]
+                if image_value == global_params.fgValue:
+                    score += fg_score
+                else:
+                    score += bg_score
+        return score
+
+    def is_inside_the_image(self, x, y, image):
+        return (0 <= x < image.shape[1]) and (0 <= y < image.shape[0])
+
+    def evaluate_model(self, court_points, binary_image):
+        score = 0
+
+        # TODO: heuristic to see whether the model makes sense
+        d1 = distance(court_points[0], court_points[1])
+        d2 = distance(court_points[1], court_points[2])
+        d3 = distance(court_points[2], court_points[3])
+        d4 = distance(court_points[3], court_points[0])
+        t = 30
+        if d1 < t or d2 < t or d3 < t or d4 < t:
+            return global_params.initial_fit_score  # Replace with your initial fit score value
+
+        score += self.compute_score_for_line_segment(court_points[0], court_points[1], binary_image)
+        score += self.compute_score_for_line_segment(court_points[1], court_points[2], binary_image)
+        score += self.compute_score_for_line_segment(court_points[2], court_points[3], binary_image)
+        score += self.compute_score_for_line_segment(court_points[3], court_points[0], binary_image)
+        score += self.compute_score_for_line_segment(court_points[4], court_points[5], binary_image)
+        score += self.compute_score_for_line_segment(court_points[6], court_points[7], binary_image)
+        score += self.compute_score_for_line_segment(court_points[8], court_points[9], binary_image)
+        score += self.compute_score_for_line_segment(court_points[10], court_points[11], binary_image)
+        score += self.compute_score_for_line_segment(court_points[12], court_points[13], binary_image)
+        #  score += self.compute_score_for_line_segment(court_points[14], court_points[14], binary_image)
+
+        print("Score =", score)
+
+        return score
