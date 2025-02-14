@@ -166,12 +166,12 @@ class TennisCourtModel:
         vec = normalize(np.array(end) - np.array(start))
 
         for i in range(length):
-            p = np.array(start) + i * vec
+            p = np.array(start) + np.multiply(vec, i)
             x = int(round(p[0]))
             y = int(round(p[1]))
             if self.is_inside_the_image(x, y, binary_image):
                 image_value = binary_image[y, x]
-                if image_value == global_params.fgValue:
+                if image_value == global_params.fg_value:
                     score += fg_score
                 else:
                     score += bg_score
