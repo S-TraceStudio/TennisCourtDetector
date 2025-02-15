@@ -150,8 +150,8 @@ class TennisCourtModel:
         best_score = global_params.initial_fit_score
         points = self.get_intersection_points(h_line_pair, v_line_pair)
 
-        print(f"Fit horizontal line pairs = {len(self.h_line_pairs)}")
-        print(f"Fit vertical line pairs = {len(self.v_line_pairs)}")
+        # print(f"Fit horizontal line pairs = {len(self.h_line_pairs)}")
+        # print(f"Fit vertical line pairs = {len(self.v_line_pairs)}")
 
         for model_h_line_pair in self.h_line_pairs:
             for model_v_line_pair in self.v_line_pairs:
@@ -212,7 +212,7 @@ class TennisCourtModel:
         score += self.compute_score_for_line_segment(court_points[12], court_points[13], binary_image)
         #  score += self.compute_score_for_line_segment(court_points[14], court_points[14], binary_image)
 
-        print("Score =", score)
+        #  print("Score =", score)
 
         return score
 
