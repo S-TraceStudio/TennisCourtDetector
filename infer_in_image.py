@@ -40,7 +40,8 @@ if __name__ == '__main__':
             #print("Image")
             #displayDebugImage(image)
             print("Binary image")
-            displayDebugImage(binary_image)
+            model.draw_model(image);
+            displayDebugImage(image)
 
     else:
         model = BallTrackerNet(out_channels=15)
