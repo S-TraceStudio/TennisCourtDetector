@@ -79,7 +79,7 @@ class TennisCourtFitter:
 
     def find_best_model_fit(self, binary_image, rgb_image):
         count = 0
-        total_count = len(self.hLinePairs)+len(self.vLinePairs)
+        total_count = len(self.hLinePairs)*len(self.vLinePairs)
 
         best_score = global_params.initial_fit_score
 
