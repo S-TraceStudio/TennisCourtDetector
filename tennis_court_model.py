@@ -16,6 +16,10 @@ class TennisCourtModel:
 
     def __init__(self):
         self.court_points.clear()
+        self.h_line_pairs.clear()
+        self.v_line_pairs.clear()
+        self.h_lines.clear()
+        self.v_lines.clear()
         h_vector = np.array([1.0, 0.0], dtype=np.float32)
         upper_base_line = Line(np.array([0.0, 0.0], dtype=np.float32), h_vector)
         upper_service_line = Line(np.array([0.0, 5.49], dtype=np.float32), h_vector)
@@ -146,6 +150,9 @@ class TennisCourtModel:
         best_score = global_params.initial_fit_score
         points = self.get_intersection_points(h_line_pair, v_line_pair)
 
+        print(f"Fit horizontal line pairs = {len(self.h_line_pairs)}")
+        print(f"Fit vertical line pairs = {len(self.v_line_pairs)}")
+
         for model_h_line_pair in self.h_line_pairs:
             for model_v_line_pair in self.v_line_pairs:
                 model_points = self.get_intersection_points(model_h_line_pair, model_v_line_pair)
@@ -156,6 +163,8 @@ class TennisCourtModel:
                 if score > best_score:
                     best_score = score
                     transformation_matrix = matrix
+
+        return best_score
 
     def compute_score_for_line_segment(self, start, end, binary_image):
         score = 0
