@@ -13,6 +13,7 @@ class TennisCourtModel:
     h_line_pairs = []
     v_line_pairs = []
     court_points = []
+    transformation_matrix = np.zeros((3, 3), dtype=np.float32)
 
     def __init__(self):
         self.court_points.clear()
@@ -20,6 +21,7 @@ class TennisCourtModel:
         self.v_line_pairs.clear()
         self.h_lines.clear()
         self.v_lines.clear()
+        self.transformation_matrix = np.zeros((3, 3), dtype=np.float32)
         h_vector = np.array([1.0, 0.0], dtype=np.float32)
         upper_base_line = Line(np.array([0.0, 0.0], dtype=np.float32), h_vector)
         upper_service_line = Line(np.array([0.0, 5.49], dtype=np.float32), h_vector)
@@ -162,7 +164,7 @@ class TennisCourtModel:
                 score = self.evaluate_model(transformed_model_points, binary_image)
                 if score > best_score:
                     best_score = score
-                    transformation_matrix = matrix
+                    self.transformation_matrix = matrix
 
         return best_score
 
@@ -217,7 +219,7 @@ class TennisCourtModel:
         return score
 
     def draw_model(self, image, color = (255, 255, 0)):
-        transformed_model_points = cv2.perspectiveTransform(np.array([self._courtPoints], dtype='float32'), self._transformationMatrix)[0]
+        transformed_model_points = cv2.perspectiveTransform(np.array([self._courtPoints], dtype='float32'), self.transformation_matrix)[0]
         self.draw_model(transformed_model_points, image, color)
 
     def draw_model(self, image, color):
