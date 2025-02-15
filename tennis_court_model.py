@@ -3,9 +3,9 @@ import numpy as np
 from line import Line
 from global_paramaters import global_params
 from geometry import distance, normalize
+from debug_helper import draw_lines, draw_line
 
 LinePair = tuple[cv2.line, cv2.line]
-
 
 class TennisCourtModel:
     h_lines = []
@@ -215,3 +215,22 @@ class TennisCourtModel:
         print("Score =", score)
 
         return score
+
+    def draw_model(self, image, color = (255, 255, 0)):
+        transformed_model_points = cv2.perspectiveTransform(np.array([self._courtPoints], dtype='float32'), self._transformationMatrix)[0]
+        self.draw_model(transformed_model_points, image, color)
+
+    def draw_model(self, image, color):
+        draw_line(self.court_points[0], self.court_points[1], image, color)
+        draw_line(self.court_points[1], self.court_points[2], image, color)
+        draw_line(self.court_points[2], self.court_points[3], image, color)
+        draw_line(self.court_points[3], self.court_points[0], image, color)
+
+        draw_line(self.court_points[4], self.court_points[5], image, color)
+        draw_line(self.court_points[6], self.court_points[7], image, color)
+
+        draw_line(self.court_points[8], self.court_points[9], image, color)
+        draw_line(self.court_points[10], self.court_points[11], image, color)
+
+        draw_line(self.court_points[12], self.court_points[13], image, color)
+        draw_line(self.court_points[14], self.court_points[15], image, color)

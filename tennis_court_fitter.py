@@ -9,6 +9,7 @@ from global_paramaters import global_params
 
 class TennisCourtFitter:
     debug = True
+    debug_sort_line = False
     windowName = "TennisCourtFitter"
     hLinePairs = []
     vLinePairs = []
@@ -60,7 +61,7 @@ class TennisCourtFitter:
         x = rgb_image.shape[1] / 2.0
         sort_lines_by_distance_to_point(hLines, (x, 0))
 
-        if self.debug:
+        if self.debug_sort_line:
             for line in hLines:
                 image = rgb_image.copy()
                 draw_line(line, image, color=(255, 0, 0))
@@ -70,7 +71,7 @@ class TennisCourtFitter:
         y = rgb_image.shape[2] / 2.0
         sort_lines_by_distance_to_point(vLines, (0, y))
 
-        if self.debug:
+        if self.debug_sort_line:
             for line in vLines:
                 image = rgb_image.copy()
                 draw_line(line, image, color=(0, 255, 0))
@@ -99,9 +100,9 @@ class TennisCourtFitter:
 
         if self.debug:
             print(f"Best model score = {best_score}")
-            image = rgb_image.copy()
-            self.best_model.drawModel(image)
-            displayDebugImage(image, widow_name=self.windowName )
+            image_copy = rgb_image.copy()
+            self.best_model.draw_model(image = image_copy, color=(255, 255, 0))
+            displayDebugImage(image = image_copy, widow_name=self.windowName )
 
 
                 
