@@ -12,6 +12,7 @@ class TennisCourtFitter:
     windowName = "TennisCourtFitter"
     hLinePairs = []
     vLinePairs = []
+    best_model = TennisCourtModel();
 
     def __init__(self):
         debug = True
@@ -22,6 +23,8 @@ class TennisCourtFitter:
         self.sort_horizontal_lines(hLines, rgb_image)
         self.sort_vertical_lines(vLines, rgb_image)
 
+        self.hLinePairs.clear()
+        self.vLinePairs.clear()
         self.hLinePairs = TennisCourtModel.get_possible_line_pairs(hLines);
         self.vLinePairs = TennisCourtModel.get_possible_line_pairs(vLines);
 
@@ -31,7 +34,7 @@ class TennisCourtFitter:
 
         self.find_best_model_fit(binary_image, rgb_image)
 
-
+        return self.best_model
 
 
     def get_horizontal_and_vertical_lines(self, lines, rgbImage):
@@ -77,7 +80,7 @@ class TennisCourtFitter:
         count = 0
         total_count = len(self.hLinePairs)+len(self.vLinePairs)
 
-        bestScore = global_params.initial_fit_score
+        best_score = global_params.initial_fit_score
 
         for h_line_pair in self.hLinePairs:
             for v_line_pair in self.vLinePairs:
@@ -85,19 +88,19 @@ class TennisCourtFitter:
 
                 model = TennisCourtModel()
                 score = model.fit(h_line_pair, v_line_pair, binary_image, rgb_image)
-                if score > bestScore:
-                    bestScore = score
-                    bestModel = model
+                if score > best_score:
+                    best_score = score
+                    self.best_model = model
 
-                    print(f"Best score: {bestScore}")
+                    print(f"Best score: {best_score}")
 
             percentage = float(count) / total_count
             print(f"percentage: {percentage} %")
 
         if self.debug:
-            print(f"Best model score = {bestScore}")
+            print(f"Best model score = {best_score}")
             image = rgb_image.copy()
-            bestModel.drawModel(image)
+            self.best_model.drawModel(image)
             displayDebugImage(image, widow_name=self.windowName )
 
 
