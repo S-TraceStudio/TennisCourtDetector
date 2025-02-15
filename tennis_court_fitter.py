@@ -102,7 +102,7 @@ class TennisCourtFitter:
             print(f"Best model score = {best_score}")
             image_copy = rgb_image.copy()
             self.best_model.draw_model(image = image_copy, color=(255, 255, 0))
-            displayDebugImage(image = image_copy, widow_name=self.windowName )
+            displayDebugImage(debug_image = image_copy, widow_name=self.windowName )
 
 
                 
