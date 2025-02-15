@@ -90,8 +90,8 @@ def replace_file_extension(filename, extension):
     filename_replace_ext = new_filename.with_suffix(extension)
     return filename_replace_ext
 
-def displayDebugImage(debugImage,scale=1,widow_name='Debug Image'):
-    scaled_image = cv2.resize(debugImage, None, fx=scale, fy=scale,interpolation=cv2.INTER_LINEAR)
+def displayDebugImage(debug_image,scale=1,widow_name='Debug Image'):
+    scaled_image = cv2.resize(debug_image, None, fx=scale, fy=scale,interpolation=cv2.INTER_LINEAR)
     cv2.imshow(widow_name, scaled_image)
     cv2.waitKey(0)
     #cv2.destroyWindow('Debug Image')
