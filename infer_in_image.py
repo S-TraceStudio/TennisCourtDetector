@@ -40,7 +40,7 @@ if __name__ == '__main__':
             #print("Image")
             #displayDebugImage(image)
             print("Binary image")
-            model.draw_model(image);
+            model.draw_model(image,color=(255,255,0))
             displayDebugImage(image)
 
     else:
