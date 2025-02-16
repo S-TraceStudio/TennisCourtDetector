@@ -94,6 +94,7 @@ class TennisCourtFitter:
                     self.best_model = model
 
                     print(f"Best score: {best_score}")
+                    print(model.transformation_matrix)
 
             percentage = float(count) / total_count
             print(f"percentage: {percentage} %")
@@ -101,7 +102,7 @@ class TennisCourtFitter:
         if self.debug:
             print(f"Best model score = {best_score}")
             image_copy = rgb_image.copy()
-            self.best_model.draw_model(image = image_copy, color=(255, 255, 0))
+            self.best_model.draw_model(image = image_copy, color=(255, 0, 255))
             displayDebugImage(debug_image = image_copy, widow_name=self.windowName )
 
 

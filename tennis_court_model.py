@@ -223,21 +223,26 @@ class TennisCourtModel:
         return score
 
     def draw_model(self, image, color = (255, 255, 0)):
+        print("draw model 1")
+        # print(self.transformation_matrix)
+        transformed_model_points = cv2.perspectiveTransform(np.array([self.court_points], dtype='float32'), self.transformation_matrix)[0]
         print(self.transformation_matrix)
-        transformed_model_points = cv2.perspectiveTransform(np.array([self._courtPoints], dtype='float32'), self.transformation_matrix)[0]
-        self.draw_model(transformed_model_points, image, color)
+        self.draw_model_points(transformed_model_points, image, color)
 
-    def draw_model(self, image, color):
-        draw_line(Line(self.court_points[0], self.court_points[1]), image, color)
-        draw_line(Line(self.court_points[1], self.court_points[2]), image, color)
-        draw_line(Line(self.court_points[2], self.court_points[3]), image, color)
-        draw_line(Line(self.court_points[3], self.court_points[0]), image, color)
+    def draw_model_points(self, transformed_points, image, color= (255, 255, 0)):
+        print("draw model 2")
 
-        draw_line(Line(self.court_points[4], self.court_points[5]), image, color)
-        draw_line(Line(self.court_points[6], self.court_points[7]), image, color)
+        print(transformed_points)
+        draw_line(Line(transformed_points[0], transformed_points[1]), image, color)
+        draw_line(Line(transformed_points[1], transformed_points[2]), image, color)
+        draw_line(Line(transformed_points[2], transformed_points[3]), image, color)
+        draw_line(Line(transformed_points[3], transformed_points[0]), image, color)
 
-        draw_line(Line(self.court_points[8], self.court_points[9]), image, color)
-        draw_line(Line(self.court_points[10], self.court_points[11]), image, color)
+        draw_line(Line(transformed_points[4], transformed_points[5]), image, color)
+        draw_line(Line(transformed_points[6], transformed_points[7]), image, color)
 
-        draw_line(Line(self.court_points[12], self.court_points[13]), image, color)
-        draw_line(Line(self.court_points[14], self.court_points[15]), image, color)
+        draw_line(Line(transformed_points[8], transformed_points[9]), image, color)
+        draw_line(Line(transformed_points[10], transformed_points[11]), image, color)
+
+        draw_line(Line(transformed_points[12], transformed_points[13]), image, color)
+        draw_line(Line(transformed_points[14], transformed_points[15]), image, color)
