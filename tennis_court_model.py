@@ -115,6 +115,7 @@ class TennisCourtModel:
             self.court_points.append(compute[1].copy())  # P16
 
         # print(f"Total points = {len(self.court_points)}")
+        # print (self.court_points)
         assert len(self.court_points) == 16
 
     @staticmethod
@@ -161,6 +162,9 @@ class TennisCourtModel:
                 matrix = cv2.getPerspectiveTransform(np.array(model_points, dtype=np.float32), np.array(points, dtype=np.float32))
                 transformed_model_points = np.zeros((16, 2), dtype=np.float32)
                 transformed_model_points = cv2.perspectiveTransform(np.array([self.court_points], dtype=np.float32), matrix)[0]
+
+                #print(transformed_model_points)
+
                 score = self.evaluate_model(transformed_model_points, binary_image)
                 if score > best_score:
                     best_score = score
@@ -219,6 +223,7 @@ class TennisCourtModel:
         return score
 
     def draw_model(self, image, color = (255, 255, 0)):
+        print(self.transformation_matrix)
         transformed_model_points = cv2.perspectiveTransform(np.array([self._courtPoints], dtype='float32'), self.transformation_matrix)[0]
         self.draw_model(transformed_model_points, image, color)
 
