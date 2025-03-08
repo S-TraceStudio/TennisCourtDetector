@@ -48,6 +48,7 @@ class TennisCourtFitter:
                 hLines.append(line)
 
         if self.debug:
+            print(f"Total lines = {len(lines)}")
             print(f"Horizontal lines = {len(hLines)}")
             print(f"Vertical lines = {len(vLines)}")
             image = rgbImage.copy()
