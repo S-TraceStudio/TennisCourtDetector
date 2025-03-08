@@ -26,7 +26,7 @@ class CourtLineCandidateDetector:
         for i in range(self.parameters.refinementIterations):
             print(f"Iteration: {i}")
             self.refineLineParameters(lines, binaryImage, rgbImage)
-            self.removeDuplicateLines(lines, rgbImage)
+            lines = self.removeDuplicateLines(lines, rgbImage)
         return lines
 
     def extractLines(self, binaryImage, rgbImage):
@@ -77,11 +77,19 @@ class CourtLineCandidateDetector:
         self.image = rgbImage.copy()
         # Remove duplicates from the 'lines' list
         unique_lines = []
+
         for line in lines:
             if not any(line.is_duplicate(unique_line) for unique_line in unique_lines):
                 unique_lines.append(line)
         # Update the 'lines' list to only contain unique lines
         lines = unique_lines
+
+#        unique_lines = [lines[0]]  # Start with the first element
+#        for line in lines[1:]:
+#            if not line.is_duplicate(unique_lines[-1]):  # Compare with the last unique line
+#                unique_lines.append(line)
+#        lines = unique_lines
+
         if self.debug:
             print(f"CourtLineCandidateDetector::removeDuplicateLines line count = {len(lines)}")
             for line in lines:
@@ -90,5 +98,5 @@ class CourtLineCandidateDetector:
             draw_lines(lines, image)
             displayDebugImage(image,widow_name=self.windowName)
 
-
+        return lines
 
