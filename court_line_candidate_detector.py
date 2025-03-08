@@ -34,6 +34,8 @@ class CourtLineCandidateDetector:
         tmpLines = cv2.HoughLines(binaryImage, 1, np.pi / 180, self.parameters.houghThreshold)
         if tmpLines is not None:
             for rho, theta in tmpLines[:, 0]:
+                line = Line.from_rho_theta(rho, theta)
+                print(line)
                 lines.append(Line.from_rho_theta(rho, theta))
         if self.debug:
             print(f"CourtLineCandidateDetector::extractLines line count = {len(lines)}")
@@ -67,13 +69,20 @@ class CourtLineCandidateDetector:
                         points.append((x, y))
         return np.array(points, dtype=np.float32)
 
+    def line_equal(a, b):
+        return a.is_duplicate(b)
+
     def removeDuplicateLines(self, lines, rgbImage):
         self.image = rgbImage.copy()
+        # Remove duplicates from the 'lines' list
         unique_lines = []
         for line in lines:
-            if not any(line.is_duplicate(existing_line) for existing_line in unique_lines):
+            if not any(line.is_duplicate(unique_line) for unique_line in unique_lines):
+                if self.debug:
+                    print(line)
                 unique_lines.append(line)
-        lines[:] = unique_lines
+        # Update the 'lines' list to only contain unique lines
+        lines = unique_lines
         if self.debug:
             print(f"CourtLineCandidateDetector::removeDuplicateLines line count = {len(lines)}")
             image = rgbImage.copy()
