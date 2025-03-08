@@ -6,6 +6,12 @@ class Line:
         self.u = np.asarray(point)
         self.v = self.normalize(vector)
 
+    def __repr__(self):
+        return f"<Line u:{self.u} v:{self.v}>"
+
+    def __str__(self):
+        return f"Line: u:{self.u} v:{self.v}"
+
     @staticmethod
     def from_rho_theta(rho, theta):
         a = np.cos(theta)
