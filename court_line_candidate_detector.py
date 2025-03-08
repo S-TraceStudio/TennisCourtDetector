@@ -35,10 +35,11 @@ class CourtLineCandidateDetector:
         if tmpLines is not None:
             for rho, theta in tmpLines[:, 0]:
                 line = Line.from_rho_theta(rho, theta)
-                print(line)
                 lines.append(Line.from_rho_theta(rho, theta))
         if self.debug:
             print(f"CourtLineCandidateDetector::extractLines line count = {len(lines)}")
+            for line in lines:
+                print(line)
             image = rgbImage.copy()
             draw_lines(lines, image)
             displayDebugImage(image)
@@ -78,13 +79,13 @@ class CourtLineCandidateDetector:
         unique_lines = []
         for line in lines:
             if not any(line.is_duplicate(unique_line) for unique_line in unique_lines):
-                if self.debug:
-                    print(line)
                 unique_lines.append(line)
         # Update the 'lines' list to only contain unique lines
         lines = unique_lines
         if self.debug:
             print(f"CourtLineCandidateDetector::removeDuplicateLines line count = {len(lines)}")
+            for line in lines:
+                print(line)
             image = rgbImage.copy()
             draw_lines(lines, image)
             displayDebugImage(image,widow_name=self.windowName)
