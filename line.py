@@ -51,7 +51,13 @@ class Line:
         n2, c2 = other_line.to_implicit()
         dot = np.abs(np.dot(n1, n2))
         dot_threshold = np.cos(np.deg2rad(1))
-        return (dot > dot_threshold) and (np.abs(np.abs(c1) - np.abs(c2)) < 10)
+        test_value = np.abs(np.abs(c1) - np.abs(c2))
+        result = (dot > dot_threshold) and (np.abs(np.abs(c1) - np.abs(c2)) < 10)
+        print(f"Line1: {self} , Line2: {other_line}")
+        print(f"dot: {dot}, dot_threshold: {dot_threshold} , value: {test_value}")
+        print(result)
+        print()
+        return result
 
     def to_implicit(self):
         n = perpendicular(self.v)
