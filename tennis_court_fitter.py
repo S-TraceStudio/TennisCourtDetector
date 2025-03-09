@@ -32,6 +32,11 @@ class TennisCourtFitter:
         if self.debug:
             print(f"Horizontal line pairs = {len(self.hLinePairs)}")
             print(f"Vertical line pairs = {len(self.vLinePairs)}")
+            print()
+            print("Horizontal line pairs")
+            print(self.hLinePairs)
+            print("Vertical line pairs")
+            print(self.vLinePairs)
 
         self.find_best_model_fit(binary_image, rgb_image)
 
@@ -48,9 +53,12 @@ class TennisCourtFitter:
                 hLines.append(line)
 
         if self.debug:
+            print()
             print(f"Total lines = {len(lines)}")
             print(f"Horizontal lines = {len(hLines)}")
             print(f"Vertical lines = {len(vLines)}")
+            print()
+
             image = rgbImage.copy()
             draw_lines(hLines, image, color=(255, 0, 0))
             draw_lines(vLines, image, color=(0, 255, 0))
@@ -94,11 +102,14 @@ class TennisCourtFitter:
                     best_score = score
                     self.best_model = model
 
-                    print(f"Best score: {best_score}")
-                    print(model.transformation_matrix)
+                    if self.debug:
+                        print(f"Best score: {best_score}")
+                        print(model.transformation_matrix)
 
-            percentage = float(count) / total_count
-            print(f"percentage: {percentage} %")
+            if self.debug:
+                percentage = float(count) / total_count
+                print(f"percentage: {percentage} %")
+                print("-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
         if self.debug:
             print(f"Best model score = {best_score}")
