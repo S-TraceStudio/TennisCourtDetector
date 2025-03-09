@@ -2,6 +2,9 @@ import numpy as np
 from geometry import perpendicular
 
 class Line:
+
+    debug = False
+
     def __init__(self, point, vector):
         self.u = np.asarray(point)
         self.v = self.normalize(vector)
@@ -53,10 +56,11 @@ class Line:
         dot_threshold = np.cos(np.deg2rad(1))
         test_value = np.abs(np.abs(c1) - np.abs(c2))
         result = (dot > dot_threshold) and (np.abs(np.abs(c1) - np.abs(c2)) < 10)
-        print(f"Line1: {self} , Line2: {other_line}")
-        print(f"dot: {dot}, dot_threshold: {dot_threshold} , value: {test_value}")
-        print(result)
-        print()
+        if self.debug:
+            print(f"Line1: {self} , Line2: {other_line}")
+            print(f"dot: {dot}, dot_threshold: {dot_threshold} , value: {test_value}")
+            print(result)
+            print()
         return result
 
     def to_implicit(self):
