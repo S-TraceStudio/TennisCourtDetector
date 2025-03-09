@@ -23,6 +23,10 @@ class TennisCourtFitter:
 
         self.sort_horizontal_lines(hLines, rgb_image)
         self.sort_vertical_lines(vLines, rgb_image)
+        print("Horizontal lines")
+        print(hLines)
+        print("Vertical lines")
+        print(vLines)
 
         self.hLinePairs.clear()
         self.vLinePairs.clear()
