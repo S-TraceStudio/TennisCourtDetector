@@ -153,6 +153,12 @@ class TennisCourtModel:
         best_score = global_params.initial_fit_score
         points = self.get_intersection_points(h_line_pair, v_line_pair)
 
+        print()
+        print("Horizontal Line Pair")
+        print(h_line_pair)
+        print("Vertical Line Pair")
+        print(v_line_pair)
+        print()
         print("Points")
         print(points)
 
