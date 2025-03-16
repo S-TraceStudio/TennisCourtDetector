@@ -1,6 +1,20 @@
 import numpy as np
 from sympy import Line 
 import sympy
+import json
+from pathlib import Path
+import cv2
+
+# Create a JSON Encoder class
+class json_serialize(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 def gaussian2D(shape, sigma=1):
     m, n = [(ss - 1.) / 2. for ss in shape]
@@ -71,3 +85,14 @@ def is_point_in_image(x, y, input_width=1280, input_height=720):
         res = (x >= 0) and (x <= input_width) and (y >= 0) and (y <= input_height)
     return res
 
+def replace_file_extension(filename, extension):
+    new_filename = Path(filename)
+    filename_replace_ext = new_filename.with_suffix(extension)
+    return filename_replace_ext
+
+def displayDebugImage(debug_image,scale=1,widow_name='Debug Image'):
+    scaled_image = cv2.resize(debug_image, None, fx=scale, fy=scale,interpolation=cv2.INTER_LINEAR)
+    cv2.imshow(widow_name, scaled_image)
+    cv2.waitKey(0)
+    #cv2.destroyWindow('Debug Image')
+    cv2.destroyAllWindows()

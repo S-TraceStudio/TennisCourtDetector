@@ -8,6 +8,8 @@ from tqdm import tqdm
 from postprocess import postprocess, refine_kps
 from homography import get_trans_matrix, refer_kps
 import argparse
+import json
+from utils import json_serialize, replace_file_extension
 
 
 def read_video(path_video):
@@ -78,6 +80,7 @@ if __name__ == '__main__':
     print('scaleX:', scaleX)
     print('scaleY:', scaleY)
 
+    framePoints = []
     for image in tqdm(frames):
         img = cv2.resize(image, (OUTPUT_WIDTH, OUTPUT_HEIGHT))
         inp = (img.astype(np.float32) / 255.)
@@ -120,6 +123,13 @@ if __name__ == '__main__':
 
                 image = cv2.line(image, (int(points[12][0]), int(points[12][1])), (int(points[13][0]), int(points[13][1])), thickness=lineThickness, color=lineColor)
 
+        framePoints.append(points)
+
         frames_upd.append(image)
 
     write_video(frames_upd, fps, args.output_path)
+    json_filename = replace_file_extension(args.output_path,".json")
+
+    with open(json_filename,'w', encoding='utf-8') as f:
+        json.dump(framePoints,f,ensure_ascii=False, indent=4,cls = json_serialize)
+
