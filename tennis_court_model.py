@@ -238,7 +238,7 @@ class TennisCourtModel:
         print(self.transformation_matrix)
         self.draw_model_points(transformed_model_points, image, color)
 
-    def draw_model_points(self, transformed_points, image, color= (255, 255, 0)):
+    def draw_model_points(self, transformed_points, image, color= (0, 255, 255)):
         print("draw model 2")
 
         print(transformed_points)
