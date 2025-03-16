@@ -231,7 +231,7 @@ class TennisCourtModel:
 
         return score
 
-    def draw_model(self, image, color = (255, 255, 0)):
+    def draw_model(self, image, color = (0, 255, 255)):
         print("draw model 1")
         # print(self.transformation_matrix)
         transformed_model_points = cv2.perspectiveTransform(np.array([self.court_points], dtype='float32'), self.transformation_matrix)[0]
