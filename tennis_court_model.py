@@ -3,7 +3,7 @@ import numpy as np
 from line import Line
 from global_paramaters import global_params
 from geometry import distance, normalize
-from debug_helper import draw_lines, draw_line
+from debug_helper import draw_lines, draw_line, draw_line_segment
 
 LinePair = tuple[cv2.line, cv2.line]
 
@@ -242,16 +242,79 @@ class TennisCourtModel:
         print("draw model 2")
 
         print(transformed_points)
-        draw_line(Line(transformed_points[0], transformed_points[1]), image, color)
-        draw_line(Line(transformed_points[1], transformed_points[2]), image, color)
-        draw_line(Line(transformed_points[2], transformed_points[3]), image, color)
-        draw_line(Line(transformed_points[3], transformed_points[0]), image, color)
 
-        draw_line(Line(transformed_points[4], transformed_points[5]), image, color)
-        draw_line(Line(transformed_points[6], transformed_points[7]), image, color)
+        thickness = 2
+        start = transformed_points[0].astype(np.int32)
+        end = transformed_points[1].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
 
-        draw_line(Line(transformed_points[8], transformed_points[9]), image, color)
-        draw_line(Line(transformed_points[10], transformed_points[11]), image, color)
+        start = transformed_points[1].astype(np.int32)
+        end = transformed_points[2].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
 
-        draw_line(Line(transformed_points[12], transformed_points[13]), image, color)
-        draw_line(Line(transformed_points[14], transformed_points[15]), image, color)
+        start = transformed_points[2].astype(np.int32)
+        end = transformed_points[3].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+        start = transformed_points[3].astype(np.int32)
+        end = transformed_points[0].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+
+        start = transformed_points[4].astype(np.int32)
+        end = transformed_points[5].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+        start = transformed_points[6].astype(np.int32)
+        end = transformed_points[7].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+
+        start = transformed_points[8].astype(np.int32)
+        end = transformed_points[9].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+        start = transformed_points[10].astype(np.int32)
+        end = transformed_points[11].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+
+        start = transformed_points[12].astype(np.int32)
+        end = transformed_points[13].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+        start = transformed_points[14].astype(np.int32)
+        end = transformed_points[15].astype(np.int32)
+        draw_line_segment(start, end, image, color,thickness)
+
+
+
+
+
+
+
+
+
+#        draw_line_segment(transformed_points[4], transformed_points[5], image, color2, thickness)
+#        draw_line_segment(transformed_points[6], transformed_points[7], image, color2, thickness)
+
+#        draw_line_segment(transformed_points[8], transformed_points[9], image, color2, thickness)
+#        draw_line_segment(transformed_points[10], transformed_points[11], image, color2, thickness)
+
+#        draw_line_segment(transformed_points[12], transformed_points[13], image, color2, thickness)
+#        draw_line_segment(transformed_points[14], transformed_points[15], image, color2, thickness)
+
+
+        #draw_line(Line(transformed_points[0], transformed_points[1]), image, color)
+        #draw_line(Line(transformed_points[1], transformed_points[2]), image, color)
+        #draw_line(Line(transformed_points[2], transformed_points[3]), image, color)
+        #draw_line(Line(transformed_points[3], transformed_points[0]), image, color)
+
+        #draw_line(Line(transformed_points[4], transformed_points[5]), image, color)
+        #draw_line(Line(transformed_points[6], transformed_points[7]), image, color)
+
+        #draw_line(Line(transformed_points[8], transformed_points[9]), image, color)
+        #draw_line(Line(transformed_points[10], transformed_points[11]), image, color)
+
+        #draw_line(Line(transformed_points[12], transformed_points[13]), image, color)
+        #draw_line(Line(transformed_points[14], transformed_points[15]), image, color)
