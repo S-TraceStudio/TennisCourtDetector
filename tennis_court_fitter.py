@@ -72,7 +72,9 @@ class TennisCourtFitter:
 
     def sort_horizontal_lines(self, hLines, rgb_image):
         x = rgb_image.shape[1] / 2.0
+        #print(f"Before: {hLines}")
         sort_lines_by_distance_to_point(hLines, (x, 0))
+        # print(f"After: {hLines}")
 
         if self.debug_sort_line:
             for line in hLines:
@@ -81,7 +83,7 @@ class TennisCourtFitter:
                 displayDebugImage(image, widow_name=self.windowName)
 
     def sort_vertical_lines(self, vLines, rgb_image):
-        y = rgb_image.shape[2] / 2.0
+        y = rgb_image.shape[0] / 2.0
         sort_lines_by_distance_to_point(vLines, (0, y))
 
         if self.debug_sort_line:
